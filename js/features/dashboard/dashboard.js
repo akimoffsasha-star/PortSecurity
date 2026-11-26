@@ -519,32 +519,4 @@ function renderDashboard() {
     renderCharts();
   }
 
-function renderVesselsAnalyticsBlock() {
-  const vessels = state.conventionVessels || [];
-  const inspections = state.vesselInspections || [];
-  const activeVessels = vessels.filter(v => v.is_active !== false);
-
-  let overdue = 0;
-  let soon60 = 0;
-
-  activeVessels.forEach(v => {
-    const dates = [v.certificate_expiry, v.ssa_expiry, v.ssp_expiry]
-      .filter(Boolean)
-      .map(d => Math.ceil((new Date(d) - new Date()) / 86400000));
-    if (!dates.length) return;
-    const minD = Math.min(...dates);
-    if (minD < 0) overdue += 1;
-    else if (minD <= 60) soon60 += 1;
-  });
-
-  const doneInsp = inspections.filter(i => i.status === "Проведено").length;
-
-  setDashText("dashVesTotal", vessels.length);
-  setDashText("dashVesActive", activeVessels.length);
-  setDashText("dashVesOverdue", overdue);
-  setDashText("dashVesSoon60", soon60);
-  setDashText("dashVesInspTotal", inspections.length);
-  setDashText("dashVesInspDone", doneInsp);
-}
-  
 }
