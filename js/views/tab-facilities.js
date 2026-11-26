@@ -44,6 +44,8 @@ Views.addTab("tabFacilities", `
       <button class="btn btn-sm btn-outline-success" onclick="exportFilteredExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Вибірка</button>
       <button class="btn btn-sm btn-success" onclick="exportExcel797()"><i class="bi bi-download"></i> Повний звіт</button>
       <button class="btn btn-sm btn-outline-secondary" onclick="exportOperatorsContacts()"><i class="bi bi-person-lines-fill"></i> Оператори ПЗ</button>
+      <button class="btn btn-sm btn-outline-secondary" onclick="exportOperatorsContacts()"><i class="bi bi-file-earmark-excel"></i> Оператори ПЗ</button>
+      <button class="btn btn-sm btn-outline-primary" onclick="exportOperatorsWord()"><i class="bi bi-file-earmark-word"></i> Оператори ПЗ (Word)</button>    
     </div>
   </div>
 </div>
