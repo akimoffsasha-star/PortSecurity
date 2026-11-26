@@ -262,3 +262,39 @@ function exportShipownersWord() {
     rows
   );
 }
+
+function exportConventionVesselsWord() {
+  const rowsSrc = typeof getFilteredConventionVessels === "function"
+    ? getFilteredConventionVessels()
+    : (state.conventionVessels || []);
+
+  const rows = rowsSrc.map((v, idx) => [
+    idx + 1,
+    v.name || "—",
+    v.cert_expiry || "—",
+    v.assessment_expiry || "—",
+    v.plan_expiry || "—",
+    v.shipowner_contacts || "—",
+    v.company_cso || "—",
+    v.ship_sso || "—",
+    v.conclusion || "—"
+  ]);
+
+  downloadWordHtml(
+    `convention_vessels_${todayLocal()}.doc`,
+    "ПЕРЕЛІК КОНВЕНЦІЙНИХ СУДЕН (ГЛ. XI-2 SOLAS / КОДЕКС ОСПЗ)",
+    `Сформовано: ${new Date().toLocaleString("uk-UA")} | Суден у переліку: ${rows.length}`,
+    [
+      "№",
+      "Судно / назва",
+      "Міжнародне / тимчасове свідоцтво до",
+      "Оцінка охорони до",
+      "План охорони до",
+      "Судновласник / Контакти",
+      "Офіцер охорони компанії",
+      "Особа, відповідальна за охорону на судні",
+      "Висновок"
+    ],
+    rows
+  );
+}
