@@ -18,13 +18,11 @@ Views.addTab("tabVessels", `
             <option value="NONE">Усі</option><option value="OVERDUE">Прострочені документи</option>
             <option value="SOON60">Дедлайн ≤ 60 дн.</option><option value="ACTIVE">Лише активні</option>
           </select></div>
-        <div class="col-md-5 text-end">
-          <button class="btn btn-sm btn-outline-secondary" onclick="exportConventionVesselsList()" title="Зберегти список суден з урахуванням фільтрів"><i class="bi bi-file-earmark-excel"></i> Список суден</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="exportShipownersContacts()"><i class="bi bi-person-lines-fill"></i> Судновласники</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="exportConventionVesselsList()" title="Зберегти список суден з урахуванням фільтрів"><i class="bi bi-file-earmark-excel"></i> Список суден</button>
+        <div class="col-md-5 text-end d-flex flex-wrap justify-content-end gap-1">
+          <button class="btn btn-sm btn-outline-secondary" onclick="exportConventionVesselsList()" title="Зберегти список суден у Excel з урахуванням фільтрів"><i class="bi bi-file-earmark-excel"></i> Список суден</button>
           <button class="btn btn-sm btn-outline-primary" onclick="exportConventionVesselsWord()" title="Зберегти список суден у Word з урахуванням фільтрів"><i class="bi bi-file-earmark-word"></i> Судна (Word)</button>
-          <button class="btn btn-sm btn-outline-secondary" onclick="exportShipownersContacts()"><i class="bi bi-file-earmark-excel"></i> Судновласники</button>
-          <button class="btn btn-sm btn-outline-primary" onclick="exportShipownersWord()"><i class="bi bi-file-earmark-word"></i> Судновласники (Word)</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="exportShipownersContacts()" title="Зберегти перелік судновласників у Excel"><i class="bi bi-file-earmark-excel"></i> Судновласники</button>
+          <button class="btn btn-sm btn-outline-primary" onclick="exportShipownersWord()" title="Зберегти перелік судновласників у Word"><i class="bi bi-file-earmark-word"></i> Судновласники (Word)</button>
           <button class="btn btn-sm btn-primary" onclick="openConventionVesselModal(null)"><i class="bi bi-plus-lg"></i> Додати судно</button>
         </div>
       </div>
