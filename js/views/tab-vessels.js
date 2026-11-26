@@ -21,6 +21,10 @@ Views.addTab("tabVessels", `
         <div class="col-md-5 text-end">
           <button class="btn btn-sm btn-outline-secondary" onclick="exportConventionVesselsList()" title="Зберегти список суден з урахуванням фільтрів"><i class="bi bi-file-earmark-excel"></i> Список суден</button>
           <button class="btn btn-sm btn-outline-secondary" onclick="exportShipownersContacts()"><i class="bi bi-person-lines-fill"></i> Судновласники</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="exportConventionVesselsList()" title="Зберегти список суден з урахуванням фільтрів"><i class="bi bi-file-earmark-excel"></i> Список суден</button>
+          <button class="btn btn-sm btn-outline-primary" onclick="exportConventionVesselsWord()" title="Зберегти список суден у Word з урахуванням фільтрів"><i class="bi bi-file-earmark-word"></i> Судна (Word)</button>
+          <button class="btn btn-sm btn-outline-secondary" onclick="exportShipownersContacts()"><i class="bi bi-file-earmark-excel"></i> Судновласники</button>
+          <button class="btn btn-sm btn-outline-primary" onclick="exportShipownersWord()"><i class="bi bi-file-earmark-word"></i> Судновласники (Word)</button>
           <button class="btn btn-sm btn-primary" onclick="openConventionVesselModal(null)"><i class="bi bi-plus-lg"></i> Додати судно</button>
         </div>
       </div>
