@@ -136,3 +136,116 @@ async function exportConventionVesselsList() {
   downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `convention_vessels_${todayLocal()}.xlsx`);
   notify(`Експортовано суден: ${rows.length}`);
 }
+function downloadWordHtml(filename, title, subtitle, headers, rows) {
+  const escCell = v => String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\r?\n/g, "<br>");
+
+  const thHtml = headers.map(h => `<th>${escCell(h)}</th>`).join("");
+  const trHtml = rows.map(r => `<tr>${r.map(c => `<td>${escCell(c)}</td>`).join("")}</tr>`).join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<title>${escCell(title)}</title>
+<style>
+  body { font-family: "Times New Roman", serif; font-size: 11pt; color: #000; margin: 20px; }
+  h2 { font-size: 14pt; text-align: center; margin: 0 0 6px 0; }
+  .meta { font-size: 10pt; text-align: center; margin-bottom: 14px; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { border: 1px solid #000; padding: 5px 7px; vertical-align: top; word-break: break-word; }
+  th { font-weight: bold; text-align: center; background: #f2f2f2; }
+  .note-box { margin-top: 18px; border-top: 1px dashed #666; padding-top: 10px; font-size: 10pt; }
+</style>
+</head>
+<body>
+  <h2>${escCell(title)}</h2>
+  <div class="meta">${escCell(subtitle)}</div>
+  <table>
+    <thead><tr>${thHtml}</tr></thead>
+    <tbody>${trHtml}</tbody>
+  </table>
+  <div class="note-box">
+    <b>Рішення / доручення / заходи:</b> _________________________________________________
+  </div>
+</body>
+</html>`;
+
+  const blob = new Blob(["\ufeff", html], { type: "application/msword;charset=utf-8" });
+  downloadBlob(blob, filename);
+}
+
+function exportOperatorsWord() {
+  const map = new Map();
+  (state.facilities || []).forEach(f => {
+    const key = (f.operator_contacts || f.operator_name || f.code || "").trim() || `FAC-${f.id}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        operator: f.operator_contacts || f.operator_name || "—",
+        officers: new Set(),
+        codes: new Set(),
+        ports: new Set()
+      });
+    }
+    const item = map.get(key);
+    if (f.officers) item.officers.add(f.officers.trim());
+    if (f.code) item.codes.add(f.code.trim());
+    if (f.port_name) item.ports.add(f.port_name.trim());
+  });
+
+  const rows = Array.from(map.values()).map((x, idx) => [
+    idx + 1,
+    x.operator,
+    Array.from(x.officers).join("; ") || "—",
+    Array.from(x.ports).join(", ") || "—",
+    Array.from(x.codes).join(", ") || "—",
+    x.codes.size
+  ]);
+
+  downloadWordHtml(
+    `operators_PZ_${todayLocal()}.doc`,
+    "ПЕРЕЛІК ОПЕРАТОРІВ ПОРТОВИХ ЗАСОБІВ ТА КОНТАКТІВ",
+    `Сформовано: ${new Date().toLocaleString("uk-UA")} | Усього операторів: ${rows.length}`,
+    ["№", "Оператор ПЗ / контакти", "Офіцери охорони", "Порт / Зона", "Коди ПЗ", "К-сть ПЗ"],
+    rows
+  );
+}
+
+function exportShipownersWord() {
+  const map = new Map();
+  (state.conventionVessels || []).forEach(v => {
+    const key = (v.shipowner_contacts || v.shipowner || v.vessel_name || `VES-${v.id}`).trim();
+    if (!map.has(key)) {
+      map.set(key, {
+        owner: v.shipowner_contacts || v.shipowner || "—",
+        vessels: [],
+        csos: new Set(),
+        ssos: new Set()
+      });
+    }
+    const item = map.get(key);
+    if (v.vessel_name) item.vessels.push(v.vessel_name.trim());
+    if (v.cso) item.csos.add(v.cso.trim());
+    if (v.sso) item.ssos.add(v.sso.trim());
+  });
+
+  const rows = Array.from(map.values()).map((x, idx) => [
+    idx + 1,
+    x.owner,
+    x.vessels.join(", ") || "—",
+    Array.from(x.csos).join("; ") || "—",
+    Array.from(x.ssos).join("; ") || "—",
+    x.vessels.length
+  ]);
+
+  downloadWordHtml(
+    `shipowners_${todayLocal()}.doc`,
+    "ПЕРЕЛІК СУДНОВЛАСНИКІВ КОНВЕНЦІЙНИХ СУДЕН ТА КОНТАКТІВ",
+    `Сформовано: ${new Date().toLocaleString("uk-UA")} | Усього судновласників: ${rows.length}`,
+    ["№", "Судновласник / Контакти", "Судна (гл. XI-2 SOLAS / ОСПЗ)", "Офіцер охорони компанії", "Особа, відповідальна за охорону на судні", "К-сть суден"],
+    rows
+  );
+}
