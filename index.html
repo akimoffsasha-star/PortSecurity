@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' file: https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' file: https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co wss://*.supabase.co;" />
+  <title>Зведена інформація стану охорони портів та портових засобів — Наказ № 797</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Сторонні бібліотеки -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/pdfmake.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.10/build/vfs_fonts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales-all.global.min.js"></script>
+
+  <!-- Власні стилі -->
+  <link href="css/base.css" rel="stylesheet" />
+  <link href="css/dashboard.css" rel="stylesheet" />
+  <link href="css/calendar.css" rel="stylesheet" />
+  <link href="css/print.css" rel="stylesheet" />
+  <style id="facColsCss"></style>
+</head>
+<body>
+
+<div id="chartTooltip" class="chart-tooltip"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+    <span id="loadingText">Завантаження…</span>
+  </div>
+</div>
+
+<nav class="navbar navbar-dark navbar-custom sticky-top px-3 py-2 mb-3 no-print">
+  <div class="container-fluid px-0 d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="d-flex align-items-center gap-2 text-white navbar-title-text">
+        <i class="bi bi-shield-check fs-4 text-info flex-shrink-0"></i>
+        <span>ЗВЕДЕНА ІНФОРМАЦІЯ СТАНУ ОХОРОНИ ПОРТІВ ТА ПОРТОВИХ ЗАСОБІВ</span>
+      </div>
+      <span class="badge rounded-pill bg-white bg-opacity-10 text-white border border-white border-opacity-25 d-none d-xl-inline-block px-3 py-1">Наказ Мінрозвитку № 797</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+      <div class="d-flex align-items-center gap-1">
+        <span id="lastSyncBadge" class="badge bg-dark bg-opacity-25 text-light d-none d-md-inline"></span>
+        <span id="userBadge" class="badge bg-secondary d-none"></span>
+      </div>
+      <select id="autoRefreshSelect" class="form-select form-select-sm" style="width:auto;" title="Автооновлення даних" aria-label="Інтервал автооновлення">
+        <option value="0">Авто: Вимк.</option>
+        <option value="30000">Авто: 30 с</option>
+        <option value="60000">Авто: 1 хв</option>
+        <option value="300000">Авто: 5 хв</option>
+      </select>
+      <div class="d-flex align-items-center gap-1 flex-wrap">
+        <button type="button" class="btn btn-sm btn-outline-light" data-nav-action="ports"><i class="bi bi-building me-1"></i>Порти</button>
+        <button type="button" class="btn btn-sm btn-outline-light" data-nav-action="audit"><i class="bi bi-clock-history me-1"></i>Журнал</button>
+        <button type="button" class="btn btn-sm btn-outline-light" data-nav-action="config"><i class="bi bi-gear me-1"></i>Налаштування</button>
+        <button type="button" class="btn btn-sm btn-outline-light" data-nav-action="pdf"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</button>
+        <button type="button" class="btn btn-sm btn-light" data-nav-action="print"><i class="bi bi-printer me-1"></i>Друк</button>
+        <button type="button" class="btn btn-sm btn-info text-white fw-semibold" id="btnRefresh" data-nav-action="refresh"><i class="bi bi-arrow-clockwise me-1"></i>Оновити</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid px-3 pb-4">
+  <div id="printHeader" class="d-none d-print-block mb-3 pb-2 border-bottom border-dark">
+    <div class="d-flex justify-content-between align-items-baseline">
+      <h5 class="fw-bold mb-0">ЗВЕДЕНА ІНФОРМАЦІЯ СТАНУ ОХОРОНИ ПЗ ТА СУДЕН (Наказ Мінрозвитку № 797)</h5>
+      <span class="small">Дата формування звіту: <b id="printDateLabel"></b></span>
+    </div>
+  </div>
+
+  <div id="statusAlert" class="alert alert-warning d-none no-print"></div>
+
+  <ul class="nav nav-tabs mb-3 no-print" id="mainTabs">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabDashboard"><i class="bi bi-bar-chart-line me-1"></i>Аналітика</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabFacilities"><i class="bi bi-table me-1"></i>Реєстр ПЗ</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabInspections"><i class="bi bi-clipboard2-check me-1"></i>Перевірки</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCalendar"><i class="bi bi-calendar-event me-1"></i>Календар</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabVessels"><i class="bi bi-tsunami me-1"></i>Конвенційні судна</button></li>
+  </ul>
+
+  <!-- Вкладки вставляє Views.mount() із js/views/tab-*.js -->
+  <div class="tab-content" id="tabContent"></div>
+</div>
+
+<!-- Модальні вікна вставляє Views.mount() із js/views/modals-*.js -->
+<div id="modalsHost"></div>
+
+<footer class="app-footer no-print">
+  <div class="container-fluid px-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <span>© 2026 Усі права захищено. Міністерство з відновлення, інфраструктури та транспорту України | Департамент морського та внутрішнього водного транспорту</span>
+    <span class="text-light text-opacity-75 d-none d-lg-inline">Наказ Мінрозвитку № 797 від 01.05.2025</span>
+  </div>
+</footer>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="appToast" class="toast align-items-center text-bg-success border-0" role="alert"><div class="d-flex"><div class="toast-body" id="appToastBody">Готово</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Власний код. Порядок важливий: модулі спільно використовують глобальний стан (js/state.js) -->
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/core/utils.js"></script>
+<script src="js/core/domain.js"></script>
+<script src="js/ui/animations.js"></script>
+<script src="js/ui/feedback.js"></script>
+<script src="js/ui/virtual-table.js"></script>
+<script src="js/data/cache.js"></script>
+<script src="js/data/loader.js"></script>
+<script src="js/data/realtime.js"></script>
+<script src="js/features/settings.js"></script>
+<script src="js/features/filters.js"></script>
+<script src="js/features/dashboard/chart-theme.js"></script>
+<script src="js/features/dashboard/chart-switcher.js"></script>
+<script src="js/features/dashboard/dashboard.js"></script>
+<script src="js/features/dashboard/charts.js"></script>
+<script src="js/features/facilities/registry.js"></script>
+<script src="js/features/facilities/columns.js"></script>
+<script src="js/features/facilities/bulk.js"></script>
+<script src="js/features/facilities/modal.js"></script>
+<script src="js/features/facilities/duplicates.js"></script>
+<script src="js/features/admin/ports.js"></script>
+<script src="js/features/admin/audit.js"></script>
+<script src="js/features/admin/backup.js"></script>
+<script src="js/features/inspections.js"></script>
+<script src="js/features/calendar.js"></script>
+<script src="js/features/vessels.js"></script>
+<script src="js/features/gisis.js"></script>
+<script src="js/export/excel.js"></script>
+<script src="js/export/report.js"></script>
+<script src="js/views/registry.js"></script>
+<script src="js/views/tab-dashboard.js"></script>
+<script src="js/views/tab-facilities.js"></script>
+<script src="js/views/tab-inspections.js"></script>
+<script src="js/views/tab-calendar.js"></script>
+<script src="js/views/tab-vessels.js"></script>
+<script src="js/views/modals-core.js"></script>
+<script src="js/views/modals-tools.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

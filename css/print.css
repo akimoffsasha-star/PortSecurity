@@ -1,0 +1,164 @@
+/* Друк для керівництва: A4 landscape, чіткі діаграми без обрізань та накладань */
+@media print {
+  @page { size: A4 landscape; margin: 10mm 8mm; }
+
+  html, body {
+    background: #fff !important;
+    color: #0f172a !important;
+    font-size: 9pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  .navbar,
+  .nav-tabs,
+  .app-footer,
+  .loading-overlay,
+  .chart-tooltip,
+  .toast-container,
+  .btn,
+  button.fc-button,
+  .form-check,
+  .form-switch,
+  select,
+  input,
+  .fc .fc-toolbar-chunk:first-child,
+  .fc .fc-toolbar-chunk:last-child {
+    display: none !important;
+  }
+
+  .container-fluid {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  #printHeader {
+    display: flex !important;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 6px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1.5px solid #0f2744 !important;
+  }
+
+  #printHeader h5 {
+    font-size: 11pt !important;
+    line-height: 1.25;
+    margin: 0;
+    max-width: 72%;
+  }
+
+  #printHeader .small {
+    white-space: nowrap;
+    font-size: 8pt;
+    text-align: right;
+  }
+
+  .tab-pane:not(.active) { display: none !important; }
+  .tab-pane.active { display: block !important; }
+
+  .row { display: flex !important; flex-wrap: wrap !important; }
+  .col-6 { width: 50% !important; max-width: 50% !important; }
+  .col-xl-2 { width: 16.66% !important; max-width: 16.66% !important; }
+  .col-xl-3 { width: 25% !important; max-width: 25% !important; }
+  .col-lg-7 { width: 58% !important; max-width: 58% !important; }
+  .col-lg-5 { width: 42% !important; max-width: 42% !important; }
+  .col-xl-8 { width: 66% !important; max-width: 66% !important; }
+  .col-xl-4 { width: 34% !important; max-width: 34% !important; }
+
+  .h-100 { height: auto !important; }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #94a3b8 !important;
+    border-radius: 6px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 8px !important;
+    padding: 8px 10px !important;
+    background: #fff !important;
+  }
+
+  .kpi-card h2 { font-size: 15pt !important; }
+  .kpi-card { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Пропорційний друк вже відмальованих canvas */
+  .chart-frame {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    flex: none !important;
+    overflow: visible !important;
+    position: relative !important;
+  }
+
+  #deadlinesChartInner { height: auto !important; }
+
+  .chart-frame canvas {
+    display: block !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 235px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Плитки горизонту без обрізання тексту */
+  .horizon-grid { gap: 6px !important; }
+  .horizon-tile { padding: 6px 8px !important; }
+  .horizon-tile .h4 { font-size: 12pt !important; line-height: 1.2 !important; }
+
+  .table-wrap,
+  .table-responsive,
+  #riskWrap,
+  #alertsWrap,
+  #calSideList {
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  table { width: 100% !important; border-collapse: collapse !important; font-size: 8pt !important; }
+  thead { display: table-header-group; }
+  tr, td, th { break-inside: avoid; page-break-inside: avoid; }
+  thead th,
+  tbody td {
+    padding: 2px 4px !important;
+    white-space: normal !important;
+    position: static !important;
+    color: #0f172a !important;
+  }
+  thead th:not(.fc-col-header-cell) {
+    background: #0f2744 !important;
+    color: #fff !important;
+  }
+
+  .fc .fc-header-toolbar {
+    display: flex !important;
+    justify-content: center !important;
+    margin-bottom: 4px !important;
+  }
+  .fc .fc-toolbar-title {
+    font-size: 13pt !important;
+    color: #0f2744 !important;
+  }
+  .fc .fc-col-header-cell,
+  .fc thead th.fc-col-header-cell {
+    background: #e8eef6 !important;
+    color: #0f2744 !important;
+  }
+  .fc .fc-col-header-cell-cushion {
+    color: #0f2744 !important;
+    font-weight: 800 !important;
+    font-size: 8pt !important;
+  }
+  .fc .fc-daygrid-day-frame { min-height: 52px !important; }
+  .fc .fc-scrollgrid { overflow: visible !important; }
+}

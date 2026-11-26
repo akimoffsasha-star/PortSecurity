@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Автотести — Port Security Monitor</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; }
+    body { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    .summary { padding: 0.75rem 1rem; border-radius: 8px; margin: 1rem 0; font-weight: 600; }
+    .summary.ok { background: #d1e7dd; color: #0f5132; }
+    .summary.fail { background: #f8d7da; color: #842029; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 0.35rem 0.5rem; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    li.ok::before { content: "✓ "; color: #198754; }
+    li.fail::before { content: "✗ "; color: #dc3545; }
+    code { background: #f4f4f4; padding: 0.1em 0.35em; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Автотести чистої логіки</h1>
+  <p>Порівняльний стенд → постійний набір. Перевіряє <code>parseFlexibleDate</code>, <code>detectGisisColumns</code>, domain, utils.</p>
+  <div id="summary" class="summary">Запуск…</div>
+  <ul id="list"></ul>
+  <script src="../js/config.js"></script>
+  <script src="../js/state.js"></script>
+  <script src="../js/core/utils.js"></script>
+  <script src="../js/core/domain.js"></script>
+  <script src="pure-logic.test.js"></script>
+  <script>
+    const r = PureLogicTests.runAll();
+    const sum = document.getElementById("summary");
+    sum.textContent = `${r.passed}/${r.total} пройдено` + (r.failed ? `, ${r.failed} провалено` : "");
+    sum.className = "summary " + (r.failed ? "fail" : "ok");
+    const list = document.getElementById("list");
+    list.textContent = "";
+    r.details.forEach(d => {
+      const li = document.createElement("li");
+      li.className = d.ok ? "ok" : "fail";
+      li.textContent = d.msg;
+      list.appendChild(li);
+    });
+  </script>
+</body>
+</html>

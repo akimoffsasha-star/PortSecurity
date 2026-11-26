@@ -1,0 +1,293 @@
+/* ═══════════════════════════════════════════════════════════
+   Dashboard / Analytics — modern business KPI & charts
+   ═══════════════════════════════════════════════════════════ */
+
+/* KPI cards */
+.kpi-card {
+  transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
+  cursor: pointer;
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden;
+}
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md) !important;
+}
+
+.kpi-card .text-muted {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-muted) !important;
+}
+
+.kpi-card h2 {
+  font-size: 1.85rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Status pills — об'ємні «капсули» */
+.status-pill-btn {
+  cursor: pointer;
+  border-radius: 999px !important;
+  font-weight: 650;
+  font-size: 0.78rem !important;
+  padding: 0.42em 0.9em !important;
+  border: 1px solid #cbd5e1 !important;
+  background: linear-gradient(180deg, #ffffff 0%, #eef3f8 100%) !important;
+  color: #0f2744 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(15, 39, 68, 0.06),
+    0 2px 4px rgba(15, 23, 42, 0.1),
+    0 1px 1px rgba(15, 23, 42, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.status-pill-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e2eaf3 100%) !important;
+  border-color: #94a3b8 !important;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 6px 12px rgba(15, 23, 42, 0.12);
+}
+
+.status-pill-btn b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Horizon grid (risk timeline tiles) */
+.horizon-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.horizon-tile {
+  cursor: pointer;
+  transition: transform var(--ease), box-shadow var(--ease);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.95rem 1.1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.horizon-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Chart tooltip */
+.chart-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2500;
+  min-width: 175px;
+  max-width: 290px;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--chart-border);
+  border-radius: var(--radius-md);
+  padding: 10px 13px;
+  box-shadow: var(--shadow-lg);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  opacity: 0;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  backdrop-filter: blur(8px);
+}
+
+.chart-tooltip-title {
+  font-weight: 650;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.8rem;
+}
+
+.chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 2px 0;
+}
+
+.chart-tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-secondary);
+}
+
+.chart-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2.5px;
+  flex-shrink: 0;
+}
+
+.chart-tooltip-val {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.chart-tooltip-foot {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Color indicators for horizon tiles */
+.status-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  margin-right: 0.4rem;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.04);
+}
+
+.status-dot--overdue { background: #dc2626; }
+.status-dot--30      { background: #eab308; }
+.status-dot--60      { background: #f97316; }
+.status-dot--90      { background: #06b6d4; }
+
+/* Chart containers */
+.card canvas {
+  max-width: 100%;
+}
+
+/* Executive mode panel polish */
+#executivePanel .card {
+  border-radius: var(--radius-lg);
+}
+
+#executivePanel h2 {
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+}
+/* =========================================================
+   SHADCN / TREMOR SEGMENTED SWITCHER & ANALYTICS POLISH
+   ========================================================= */
+:root {
+  --chart-1: 221.2 83.2% 53.3%;
+  --chart-2: 160 84% 39%;
+  --chart-3: 38 92% 50%;
+  --chart-4: 346.8 77.2% 49.8%;
+  --chart-5: 262.1 83.3% 57.8%;
+
+  --switcher-bg: #f1f5f9;
+  --switcher-border: #e2e8f0;
+  --switcher-active-bg: #ffffff;
+  --switcher-text: #64748b;
+  --switcher-text-hover: #0f172a;
+  --switcher-active-text: #0f172a;
+  --switcher-accent: #2563eb;
+}
+
+[data-theme="dark"],
+.dark,
+[data-bs-theme="dark"] {
+  --switcher-bg: #18181b;
+  --switcher-border: #27272a;
+  --switcher-active-bg: #09090b;
+  --switcher-text: #a1a1aa;
+  --switcher-text-hover: #fafafa;
+  --switcher-active-text: #fafafa;
+  --switcher-accent: #60a5fa;
+}
+
+.psm-chart-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: var(--switcher-bg);
+  border: 1px solid var(--switcher-border);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04);
+  user-select: none;
+}
+
+.psm-chart-switcher__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--switcher-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.12s ease;
+}
+
+.psm-chart-switcher__btn:hover {
+  color: var(--switcher-text-hover);
+}
+
+.psm-chart-switcher__btn:active {
+  transform: scale(0.97);
+}
+
+.psm-chart-switcher__btn.is-active,
+.psm-chart-switcher__btn[aria-pressed="true"] {
+  background: var(--switcher-active-bg);
+  color: var(--switcher-active-text);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(15, 23, 42, 0.04);
+}
+
+.psm-chart-switcher__btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  opacity: 0.78;
+}
+
+.psm-chart-switcher__btn.is-active svg {
+  color: var(--switcher-accent);
+  opacity: 1;
+}
+
+/* Глобальна панель перемикання всіх графіків на дашборді */
+.psm-dashboard-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+}
+
+.psm-chart-viewport {
+  position: relative;
+  width: 100%;
+  min-height: 290px;
+}
