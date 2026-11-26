@@ -87,10 +87,20 @@ Views.addTab("tabFacilities", `
   <table class="table table-sm table-bordered table-hover align-middle mb-0">
     <thead>
       <tr>
-        <th class="no-print text-center" style="width:32px;"><input type="checkbox" id="facSelectAll" title="Обрати / зняти всю вибірку" onclick="toggleSelectAllFacilities(this.checked)" /></th>
-        <th class="no-print">Дії</th><th>Код</th><th>Порт / Зона</th><th>Назва ПЗ</th><th>Стан</th>
-        <th>Акт до</th><th>ООПЗ до</th><th>ПОПЗ до</th>
-        <th>Офіцери охорони</th><th>Оператор ПЗ / контакти</th><th>ВИСНОВОК</th><th>Остання перевірка</th><th>Коментарі</th>
+        <th class="no-print" style="width:32px;"><input type="checkbox" id="chkFacAll" onclick="toggleAllFacilities(this.checked)" /></th>
+        <th class="no-print">Дії</th>
+        <th>Код</th>
+        <th>Порт / Зона</th>
+        <th>Назва ПЗ</th>
+        <th>Стан</th>
+        <th>Акт до</th>
+        <th>ООПЗ до</th>
+        <th>ПОПЗ до</th>
+        <th>офіцери охорони</th>
+        <th>Оператор ПЗ/контакти</th>
+        <th>ВИСНОВОК</th>
+        <th>Остання перевірка</th>
+        <th>Коментарі</th>
       </tr>
     </thead>
     <tbody id="facilitiesBody"></tbody>
