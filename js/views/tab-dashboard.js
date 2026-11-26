@@ -422,4 +422,15 @@ Views.addTab("tabDashboard", `
     </div>
   </div>
 </div>
+
+<div class="card p-3 mb-3" id="dashVesselsSummaryCard">
+  <h6 class="fw-bold mb-2"><i class="bi bi-ship me-1"></i>Конвенційні судна (гл. XI-2 SOLAS / ОСПЗ) та перевірки</h6>
+  <div class="row g-2 small">
+    <div class="col-md-3">Усього суден: <b id="dashVesTotal">0</b> (активних: <b id="dashVesActive">0</b>)</div>
+    <div class="col-md-3">Прострочено документи: <b id="dashVesOverdue" class="text-danger">0</b></div>
+    <div class="col-md-3">Дедлайн ≤ 60 дн.: <b id="dashVesSoon60" class="text-warning">0</b></div>
+    <div class="col-md-3">Перевірок суден: <b id="dashVesInspTotal">0</b> (проведено: <b id="dashVesInspDone">0</b>)</div>
+  </div>
+</div>
+
 `);
