@@ -136,41 +136,150 @@ async function exportConventionVesselsList() {
   downloadBlob(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), `convention_vessels_${todayLocal()}.xlsx`);
   notify(`Експортовано суден: ${rows.length}`);
 }
-function downloadWordHtml(filename, title, subtitle, headers, rows) {
+function downloadWordHtml(filename, title, subtitle, headers, rows, opts = {}) {
+  const { landscape = false, colWidths = [] } = opts;
+
   const escCell = v => String(v ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/\r?\n/g, "<br>");
 
-  const thHtml = headers.map(h => `<th>${escCell(h)}</th>`).join("");
-  const trHtml = rows.map(r => `<tr>${r.map(c => `<td>${escCell(c)}</td>`).join("")}</tr>`).join("");
+  const colGroupHtml = colWidths.length
+    ? `<colgroup>${colWidths.map(w => `<col style="width:${w};">`).join("")}</colgroup>`
+    : "";
+
+  const thHtml = headers
+    .map((h, i) => `<th${colWidths[i] ? ` style="width:${colWidths[i]};"` : ""}>${escCell(h)}</th>`)
+    .join("");
+
+  const trHtml = rows
+    .map(r => `<tr>${r.map(c => `<td>${escCell(c)}</td>`).join("")}</tr>`)
+    .join("");
+
+  // A4: 297mm x 210mm (альбомна) або 210mm x 297mm (книжкова)
+  // Поля: верхнє 25мм, праве 10мм, нижнє 10мм, ліве 10мм
+  const pageSizeCss = landscape ? "297mm 210mm" : "210mm 297mm";
+  const orientationCss = landscape ? "landscape" : "portrait";
 
   const html = `<!DOCTYPE html>
-<html lang="uk">
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40"
+      lang="uk">
 <head>
 <meta charset="utf-8">
 <title>${escCell(title)}</title>
+<!--[if gte mso 9]>
+<xml>
+  <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+    <w:DoNotOptimizeForBrowser/>
+  </w:WordDocument>
+</xml>
+<![endif]-->
 <style>
-  body { font-family: "Times New Roman", serif; font-size: 11pt; color: #000; margin: 20px; }
-  h2 { font-size: 14pt; text-align: center; margin: 0 0 6px 0; }
-  .meta { font-size: 10pt; text-align: center; margin-bottom: 14px; color: #333; }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  th, td { border: 1px solid #000; padding: 5px 7px; vertical-align: top; word-break: break-word; }
-  th { font-weight: bold; text-align: center; background: #f2f2f2; }
-  .note-box { margin-top: 18px; border-top: 1px dashed #666; padding-top: 10px; font-size: 10pt; }
+  @page Section1 {
+    size: ${pageSizeCss};
+    mso-page-orientation: ${orientationCss};
+    margin: 25mm 10mm 10mm 10mm;
+    mso-header-margin: 10mm;
+    mso-footer-margin: 5mm;
+    mso-title-page: yes;
+    mso-footer: f1;
+    mso-first-footer: ff1;
+  }
+  div.Section1 {
+    page: Section1;
+  }
+  body {
+    font-family: "Times New Roman", serif;
+    font-size: 10.5pt;
+    color: #000;
+    margin: 0;
+    padding: 0;
+  }
+  h2 {
+    font-size: 13pt;
+    text-align: center;
+    margin: 0 0 4px 0;
+  }
+  .meta {
+    font-size: 9.5pt;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 6px;
+  }
+  table.data-table th,
+  table.data-table td {
+    border: 1px solid #000;
+    padding: 4px 5px;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 9.5pt;
+  }
+  table.data-table th {
+    font-weight: bold;
+    text-align: center;
+    background: #f2f2f2;
+  }
+  table.data-table thead {
+    display: table-header-group;
+  }
+  table.data-table tr {
+    page-break-inside: avoid;
+  }
+  .note-box {
+    margin-top: 14px;
+    border-top: 1px dashed #666;
+    padding-top: 8px;
+    font-size: 10pt;
+  }
+  p.MsoFooter, p.MsoFirstFooter {
+    margin: 0;
+    text-align: center;
+    font-family: "Times New Roman", serif;
+    font-size: 9.5pt;
+  }
+  table.hf-table {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    mso-element: footer;
+  }
 </style>
 </head>
 <body>
+<div class="Section1">
   <h2>${escCell(title)}</h2>
   <div class="meta">${escCell(subtitle)}</div>
-  <table>
+  <table class="data-table">
+    ${colGroupHtml}
     <thead><tr>${thHtml}</tr></thead>
     <tbody>${trHtml}</tbody>
   </table>
   <div class="note-box">
-    <b>Рішення / доручення / заходи:</b> _________________________________________________
+    <b>Рішення / доручення / заходи:</b> __________________________________________________________________________
   </div>
+</div>
+
+<!-- Колонтитули Word: 1-ша сторінка порожня, з 2-ї сторінки — номер по центру внизу -->
+<div style="mso-element:footer" id="ff1">
+  <p class="MsoFirstFooter"></p>
+</div>
+<div style="mso-element:footer" id="f1">
+  <p class="MsoFooter">
+    <span style="mso-field-code:' PAGE '"></span>
+  </p>
+</div>
 </body>
 </html>`;
 
@@ -295,6 +404,10 @@ function exportConventionVesselsWord() {
       "Особа, відповідальна за охорону на судні",
       "Висновок"
     ],
-    rows
+    rows,
+    {
+      landscape: true,
+      colWidths: ["4%", "13%", "10%", "9%", "9%", "19%", "12%", "12%", "12%"]
+    }
   );
 }
